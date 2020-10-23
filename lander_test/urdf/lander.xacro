@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!-- Lander -->
+<robot name="lander" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <!-- Link 1 -->
+  <xacro:property name="mass1" value="1" /> <!-- Link 1 -->
+  <xacro:property name="length1" value="0.2" /> <!-- Link 1 -->
+  <xacro:property name="radius1" value="0.1" /> <!-- Link 1 -->
+  <!-- Link 2 -->
+  <xacro:property name="mass2" value="1" /> <!-- Link 1 -->
+  <xacro:property name="length2" value="0.25" /> <!-- Link 1 -->
+  <xacro:property name="radius2" value="0.13" /> <!-- Link 1 -->
+  <!-- Link 3 -->
+  <xacro:property name="axel_offset" value="0" /> <!-- Space btw top of beam and the each joint -->
+   -->
+   
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find lander_test)/urdf/lander.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find lander_test)/urdf/materials.xacro" /> 
+    
+  <link name="base_link"/>
+  
+  <joint name="body_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="link1"/>
+  </joint>
+  
+  <!-- Bottom Link -->
+  <link name="link1">
+    <collision>
+      <origin xyz="0 0 ${length1/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${length1}" radius="${radius1}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${length1/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${length1}" radius="${radius1}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${length1/2}" rpy="0 0 0"/>
+      <mass value="${mass1}"/>
+      <inertia
+	  ixx="${mass1 / 12.0 * (3*radius1*radius1 + length1*length1)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass1 / 12.0 * (3*radius1*radius1 + length1*length1)}" iyz="0.0"
+	  izz="${mass1 / 2.0 * (radius1*radius1)}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="fixed">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 ${length1 - axel_offset}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Middle Link -->
+  <link name="link2">
+    <collision>
+      <origin xyz="0 0 ${length2/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${length2}" radius="${radius2}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${length2/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${length2}" radius="${radius2}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${length2/2}" rpy="0 0 0"/>
+      <mass value="${mass2}"/>
+      <inertia
+	  ixx="${mass2 / 12.0 * (3*radius2*radius2 + length2*length2)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass2 / 12.0 * (3*radius2*radius2 + length2*length2)}" iyz="0.0"
+	  izz="${mass2 / 2.0 * (radius2*radius2)}"/>
+    </inertial>
+  </link>
+
+</robot>
