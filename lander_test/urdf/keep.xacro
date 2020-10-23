@@ -15,6 +15,9 @@
   <!-- Link laser -->
   <xacro:property name="mass_laser" value="0.1" /> <!-- Link laser -->
   <xacro:property name="length_laser" value="0.05" /> <!-- Link laser -->
+  
+  <xacro:property name="axel_offset" value="0" /> <!-- Space btw top of beam and the each joint -->
+   -->
    
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
   <xacro:include filename="$(find lander_test)/urdf/lander.gazebo" />
@@ -25,31 +28,10 @@
   
   <joint name="body_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="laser"/>
-  </joint>
-  
-  <link name="laser">
-    <visual>
-      <geometry>
-        <box size="${length_laser} ${length_laser} ${length_laser}"/>
-      </geometry>
-      <material name="red">
-        <color rgba="0.9 0.1 0.1 1"/>
-      </material>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="${length_laser} ${length_laser} ${length_laser}"/>
-      </geometry>
-    </collision>
-  </link>
-  
-  <joint name="laser_joint" type="fixed">
-    <parent link="laser"/>
     <child link="link1"/>
-    <origin xyz="0 0 ${length_laser/2}" rpy="0 0 0"/>
   </joint>
   
+  <!-- Bottom Link -->
   <link name="link1">
     <collision>
       <origin xyz="0 0 ${length1/2}" rpy="0 0 0"/>
@@ -78,19 +60,20 @@
   <joint name="joint1" type="fixed">
     <parent link="link1"/>
     <child link="link2"/>
-    <origin xyz="0 0 ${length1}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${length1 - axel_offset}" rpy="0 0 0"/>
   </joint>
 
+  <!-- Middle Link -->
   <link name="link2">
     <collision>
-      <origin xyz="0 0 ${length2/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${length2/2 - axel_offset}" rpy="0 0 0"/>
       <geometry>
         <cylinder length="${length2}" radius="${radius2}"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${length2/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${length2/2 - axel_offset}" rpy="0 0 0"/>
       <geometry>
         <cylinder length="${length2}" radius="${radius2}"/>
       </geometry>
@@ -106,4 +89,26 @@
     </inertial>
   </link>
   
+  <joint name="laser_joint" type="fixed">
+    <parent link="link2"/>
+    <child link="laser"/>
+    <origin xyz="0 0 ${length2 - axel_offset + length_laser/2}" rpy="0 0 0"/>
+  </joint>
+  
+  <link name="laser">
+    <visual>
+      <geometry>
+        <box size="${length_laser} ${length_laser} ${length_laser}"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.9 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${length_laser} ${length_laser} ${length_laser}"/>
+      </geometry>
+    </collision>
+  </link>
+
 </robot>
